@@ -1,0 +1,56 @@
+package com.example.notesapp
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+
+class Tasks2 : AppCompatActivity() {
+
+    lateinit var ref : DatabaseReference
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_tasks2)
+
+        ref = FirebaseDatabase.getInstance().getReference("USERS")
+
+        val btnAdd = findViewById<ImageView>(R.id.btnAdd)
+        btnAdd.setOnClickListener {
+            savedata()
+
+            Intent(this@Tasks2, Tasks1::class.java).also {
+                startActivity(it)
+            }
+        }
+        val back = findViewById<ImageView>(R.id.btnback)
+        back.setOnClickListener {
+            Intent(this@Tasks2, Tasks1::class.java).also {
+                startActivity(it)
+            }
+        }
+
+    }
+
+    private fun savedata() {
+        val input = findViewById<EditText>(R.id.task)
+        val task = input.text.toString()
+
+
+
+        val userid = ref.push().key.toString()
+        val user = Users1(userid, task)
+
+        ref.child(userid).setValue(user).addOnCompleteListener {
+            Toast.makeText(this, "Successs", Toast.LENGTH_SHORT).show()
+            input.setText("")
+        }
+    }
+}
